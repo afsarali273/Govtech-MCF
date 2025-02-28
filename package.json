@@ -1,0 +1,21 @@
+{
+  "name": "govtech-mcf",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {},
+  "author": "Afsar Ali",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@playwright/test": "^1.50.1",
+    "@types/node": "^22.13.5"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^9.5.0",
+    "@types/faker": "^6.6.8",
+    "date-fns": "^4.1.0",
+    "dotenv": "^16.4.7",
+    "faker": "^6.6.6",
+    "mysql2": "^3.12.0"
+  }
+}
