@@ -17,14 +17,13 @@ test.beforeEach('Navigation to Login Page', async ({page}) => {
     await page.goto(LOGIN_URL);
 })
 
-test('Successfully upload and create heroes from a valid CSV file', async ({ page, loginPage }) => {
+test('Successfully upload and create heroes from a valid CSV file', async ({ loginPage, dashboardPage }) => {
     const filePath = FileUtils.createCleanCsvFileForHeroes(3);
     console.log(`CSV file path: ${filePath}`);
 
     // Login and upload file
     await loginPage.loginAs('Clerk');
 
-    const dashboardPage = new DashboardPage(page);
     await dashboardPage.uploadCsvFile(filePath);
     await expect(await dashboardPage.getSuccessMessageEl()).toHaveText('Created Successfully!');
 
@@ -37,14 +36,13 @@ test('Successfully upload and create heroes from a valid CSV file', async ({ pag
     cleanupFile(filePath);
 });
 
-test('Upload a CSV file with an erroneous record and create valid heroes', async ({ page, loginPage }) => {
+test('Upload a CSV file with an erroneous record and create valid heroes', async ({ page, loginPage, dashboardPage }) => {
     const filePath = FileUtils.createPartialCleanCsvFileForHeroes(3);
     console.log(`CSV file path: ${filePath}`);
 
     // Login and upload file
     await loginPage.loginAs('Clerk');
 
-    const dashboardPage = new DashboardPage(page);
     await dashboardPage.uploadCsvFile(filePath);
     await expect(await dashboardPage.getFailureMessageEl()).toHaveText('There are 1 records which were not persisted! Please contact tech support for help!');
 
@@ -59,7 +57,7 @@ test('Upload a CSV file with an erroneous record and create valid heroes', async
     cleanupFile(filePath);
 });
 
-test('Upload an invalid CSV file format (missing required fields)', async ({ page, loginPage }) => {
+test('Upload an invalid CSV file format (missing required fields)', async ({ page, loginPage, dashboardPage }) => {
     const invalidCsvData = `natid,name,gender,birthDate
 natid-01,Alice,FEMALE,1990-01-01T12:00:00`;
 
@@ -69,7 +67,6 @@ natid-01,Alice,FEMALE,1990-01-01T12:00:00`;
     // Login and upload file
     await loginPage.loginAs('Clerk');
 
-    const dashboardPage = new DashboardPage(page);
     await dashboardPage.uploadCsvFile(csvFilePath);
     await expect(await dashboardPage.getFailureMessageEl()).toHaveText('Unable to process csv file! Please contact tech support for help!');
 
