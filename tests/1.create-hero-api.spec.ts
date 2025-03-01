@@ -2,6 +2,7 @@ import {test, expect} from '@playwright/test';
 import {WorkingClassHeroBuilder} from "../utils/data/working-class-heros-builder";
 import DatabaseUtil from "../utils/DatabaseUtil";
 import {apiEndpoints} from "../utils/api-endpoints";
+import {CommonUtils} from "../utils/common-utils";
 
  const apiUrl = apiEndpoints.CREATE_HERO;
 
@@ -24,6 +25,8 @@ test.describe('AC1: Create a working class hero with valid payload', () => {
         expect(responseBody).toHaveProperty('timestamp');
 
         // Check if the hero was created successfully in the database
+        // Verify vouchers were created in the database
+        await CommonUtils.verifyDatabaseEntriesForHero([heroData.natid], 1);
 
     });
 });
@@ -121,6 +124,7 @@ test.describe('AC3: Duplicate natid should return 400 error', () => {
 
         const response1 = await request.post(apiUrl, { data: heroData });
 
+        console.log(await response1.json())
         // Check if the status code is 200 (Created)
         expect(response1.status()).toBe(200);
 
