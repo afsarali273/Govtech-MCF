@@ -1,8 +1,9 @@
 import {test, expect} from '@playwright/test';
 import {WorkingClassHeroBuilder} from "../utils/data/working-class-heros-builder";
 import DatabaseUtil from "../utils/DatabaseUtil";
+import {apiEndpoints} from "../utils/api-endpoints";
 
-const apiUrl = 'http://localhost:9997/api/v1/hero';
+ const apiUrl = apiEndpoints.CREATE_HERO;
 
 test.describe('AC1: Create a working class hero with valid payload', () => {
     test('Create a working class hero with valid payload', async ({ request }) => {

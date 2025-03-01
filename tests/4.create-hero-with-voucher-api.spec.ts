@@ -1,13 +1,13 @@
 import { expect, test } from "@playwright/test";
 import { WorkingClassHeroBuilder } from "../utils/data/working-class-heros-builder";
 import DatabaseUtil from "../utils/DatabaseUtil";
+import {apiEndpoints} from "../utils/api-endpoints";
 
 // Constants
-const apiUrl = 'http://localhost:9997/api/v1/hero/vouchers';
 
 // Utility Function for Posting Hero Data
 async function postHeroData(request: any, heroData: any) {
-    return await request.post(apiUrl, { data: heroData });
+    return await request.post(apiEndpoints.CREATE_HERO_WITH_VOUCHER, { data: heroData });
 }
 
 // Utility Function to Verify Vouchers in Database
@@ -26,8 +26,6 @@ async function verifyVouchersInDatabase(natid: string, expectedVoucherCount: num
 test('Successfully create a working class hero with vouchers', async ({ request }) => {
     const heroData = new WorkingClassHeroBuilder().getHero();
     heroData.vouchers = [{ voucherName: "VOUCHER 1", voucherType: "TRAVEL" }];
-
-    console.log(heroData);
 
     const response = await postHeroData(request, heroData);
 

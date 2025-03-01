@@ -5,15 +5,15 @@ import { FileUtils } from "../utils/file-utils";
 import GlobalDataStore from "../utils/GlobalDataStore";
 import { WorkingClassHero } from "../utils/data/working-class-heros-builder";
 import DatabaseUtil from "../utils/DatabaseUtil";
+import {CLERK_DASHBOARD_URL, LOGIN_URL} from "../utils/api-endpoints";
 
-const uploadUrl = 'http://localhost:9997/login';
 
 async function loginAsClerk(page: Page) {
-    await page.goto(uploadUrl);
+    await page.goto(LOGIN_URL);
     await page.fill('[id="username-in"]', 'clerk');
     await page.fill('[id="password-in"]', 'clerk');
     await page.click('input[type="submit"]');
-    await page.waitForURL('http://localhost:9997/clerk/dashboard');
+    await page.waitForURL(CLERK_DASHBOARD_URL);
     const headingTitle = await page.locator('h1');
     const subTitle = await page.locator('span');
     await expect(headingTitle).toHaveText('Clerk Dashboard');

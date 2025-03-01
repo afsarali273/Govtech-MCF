@@ -1,20 +1,20 @@
 import { expect, Page, test } from "@playwright/test";
 import * as fs from "node:fs";
 import DatabaseUtil from "../utils/DatabaseUtil";
+import {BOOK_KEEPER_DASHBOARD_URL, LOGIN_URL} from "../utils/api-endpoints";
 
 // Constants
-const loginUrl = 'http://localhost:9997/login';
 const taxReliefFilePathPrefix = './downloads/tax_relief_';
 
 // Utility Functions
 
 // Login as Book Keeper
 async function loginAsBookKeeper(page: Page) {
-    await page.goto(loginUrl);
+    await page.goto(LOGIN_URL);
     await page.fill('[id="username-in"]', 'bk');
     await page.fill('[id="password-in"]', 'bk');
     await page.click('input[type="submit"]');
-    await page.waitForURL('http://localhost:9997/bookkeeper/dashboard');
+    await page.waitForURL(BOOK_KEEPER_DASHBOARD_URL);
 
     await verifyDashboard(page);
 }
