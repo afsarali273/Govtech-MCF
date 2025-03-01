@@ -1,7 +1,8 @@
 
 To run automation scripts
 ```shell
- npm run test
+  npm install
+  npm run test
 ```
 
 
