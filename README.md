@@ -152,9 +152,12 @@ To run the tests, you'll need to have the following installed:
 Folder Structure
 ```html
 ├── tests/
-│   ├── working-class-hero.spec.ts         # Main test cases for working class heroes
-│   ├── tax-relief-file.spec.ts           # Tests for tax relief file generation
-│   └── voucher.spec.ts                   # Tests for working with vouchers
+│   ├── 1.create-hero-api.spec.ts         
+│   ├── 2.upload-csv-ui.spec.ts           
+│   ├── 3.tax-relief-egress.spec.ts    
+|   ├── 4.create-hero-with-voucher-api.spec.ts
+|   ├── 5.heros-owes-money-api.spec.ts
+|   └── 6.system-owner-voucher-check-api.spec.ts
 ├── utils/
 │   ├── data/
 │   │   └── working-class-heros-builder.ts # Helper classes to build hero data
