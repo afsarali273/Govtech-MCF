@@ -1,21 +1,26 @@
-import {expect} from "@playwright/test";
+import { expect } from "@playwright/test";
 import * as path from "node:path";
 import * as fs from "node:fs";
 import { FileUtils } from "../utils/file-utils";
 import GlobalDataStore from "../utils/GlobalDataStore";
 import { WorkingClassHero } from "../utils/data/working-class-heros-builder";
-import {LOGIN_URL} from "../utils/api-endpoints";
-import {DashboardPage} from "../page-object/dashboard.page";
-import {test} from "../page-object/base-page";
-import {CommonUtils} from "../utils/common-utils";
+import { LOGIN_URL } from "../utils/api-endpoints";
+import { test } from "../page-object/base-page";
+import { CommonUtils } from "../utils/common-utils";
+
+const SUCCESS_MESSAGE = 'Created Successfully!';
+const FAILURE_MESSAGE_PARTIAL = 'There are 1 records which were not persisted! Please contact tech support for help!';
+const FAILURE_MESSAGE_INVALID = 'Unable to process csv file! Please contact tech support for help!';
+
+const CLEANUP_CSV_FILE_PATH = 'invalid-format.csv';
 
 function cleanupFile(filePath: string) {
     fs.unlinkSync(filePath);
 }
 
-test.beforeEach('Navigation to Login Page', async ({page}) => {
+test.beforeEach('Navigation to Login Page', async ({ page }) => {
     await page.goto(LOGIN_URL);
-})
+});
 
 test('Successfully upload and create heroes from a valid CSV file', async ({ loginPage, dashboardPage }) => {
     const filePath = FileUtils.createCleanCsvFileForHeroes(3);
@@ -23,9 +28,10 @@ test('Successfully upload and create heroes from a valid CSV file', async ({ log
 
     // Login and upload file
     await loginPage.loginAs('Clerk');
-
     await dashboardPage.uploadCsvFile(filePath);
-    await expect(await dashboardPage.getSuccessMessageEl()).toHaveText('Created Successfully!');
+
+    // Verify success message
+    await expect(await dashboardPage.getSuccessMessageEl()).toHaveText(SUCCESS_MESSAGE);
 
     // Verify the records are persisted in the database
     const herosUploaded: WorkingClassHero[] = GlobalDataStore.get('heroesCleanData');
@@ -36,15 +42,14 @@ test('Successfully upload and create heroes from a valid CSV file', async ({ log
     cleanupFile(filePath);
 });
 
-test('Upload a CSV file with an erroneous record and create valid heroes', async ({ page, loginPage, dashboardPage }) => {
+test('Upload a CSV file with an erroneous record and create valid heroes', async ({ loginPage, dashboardPage }) => {
     const filePath = FileUtils.createPartialCleanCsvFileForHeroes(3);
-    console.log(`CSV file path: ${filePath}`);
-
     // Login and upload file
     await loginPage.loginAs('Clerk');
-
     await dashboardPage.uploadCsvFile(filePath);
-    await expect(await dashboardPage.getFailureMessageEl()).toHaveText('There are 1 records which were not persisted! Please contact tech support for help!');
+
+    // Verify failure message
+    await expect(await dashboardPage.getFailureMessageEl()).toHaveText(FAILURE_MESSAGE_PARTIAL);
 
     // Verify the records are persisted in the database
     const herosUploaded: WorkingClassHero[] = GlobalDataStore.get('heroesPartialCleanData');
@@ -57,18 +62,19 @@ test('Upload a CSV file with an erroneous record and create valid heroes', async
     cleanupFile(filePath);
 });
 
-test('Upload an invalid CSV file format (missing required fields)', async ({ page, loginPage, dashboardPage }) => {
+test('Upload an invalid CSV file format (missing required fields)', async ({ loginPage, dashboardPage }) => {
     const invalidCsvData = `natid,name,gender,birthDate
 natid-01,Alice,FEMALE,1990-01-01T12:00:00`;
 
-    const csvFilePath = path.join(__dirname, 'invalid-format.csv');
+    const csvFilePath = path.join(__dirname, CLEANUP_CSV_FILE_PATH);
     fs.writeFileSync(csvFilePath, invalidCsvData);
 
     // Login and upload file
     await loginPage.loginAs('Clerk');
-
     await dashboardPage.uploadCsvFile(csvFilePath);
-    await expect(await dashboardPage.getFailureMessageEl()).toHaveText('Unable to process csv file! Please contact tech support for help!');
+
+    // Verify failure message
+    await expect(await dashboardPage.getFailureMessageEl()).toHaveText(FAILURE_MESSAGE_INVALID);
 
     // Cleanup
     cleanupFile(csvFilePath);

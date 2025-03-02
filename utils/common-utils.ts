@@ -20,5 +20,6 @@ export class CommonUtils{
         const queryRes = await DatabaseUtil.getInstance().get(query);
         console.log(queryRes);
         expect(queryRes, {message: 'Persisted Data in DB does not match'}).toHaveLength(expectedLength);
+        return queryRes;
     }
 }

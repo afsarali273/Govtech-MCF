@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { WorkingClassHeroBuilder } from "../utils/data/working-class-heros-builder";
 import {apiEndpoints} from "../utils/api-endpoints";
+import {ApiUtils} from "../utils/ApiUtils";
 
 
 // Helper function to create hero data with vouchers
@@ -52,15 +53,13 @@ test('Successfully retrieve the number of vouchers each customer has for each ca
     const heroData = createHeroWithVouchers();
 
     // Create the hero via API
-    const createHeroRes = await request.post(apiEndpoints.CREATE_HERO_WITH_VOUCHER, { data: heroData });
-    expect(createHeroRes.status()).toBe(200);
+    await ApiUtils.post(request,apiEndpoints.CREATE_HERO_WITH_VOUCHER,heroData,200, false);
 
     // Retrieve Vouchers
     const response = await request.get(apiEndpoints.GET_VOUCHER_COUNT);
     expect(response.status()).toBe(200);
 
-    const responseBody = await response.json();
-    console.log(responseBody);
+    const {responseBody} = await ApiUtils.get(request, apiEndpoints.GET_VOUCHER_COUNT)
 
     // Validate response structure
     validateVoucherResponseStructure(responseBody);
